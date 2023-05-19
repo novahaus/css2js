@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "type": "module",
   "source": "src/index.ts",
-  "main": "dist/main.js",
+  "main": "dist/main.cjs",
   "types": "dist/types.d.ts",
   "scripts": {
-    "dev": "parcel watch",
-    "build": "tsc && parcel build",
+    "dev": "parcel watch ./src/index.ts",
+    "build": "tsc && parcel build ./src/index.ts",
     "test": "vitest"
   },
   "devDependencies": {
