@@ -30,7 +30,7 @@ function saniziteDeclarationRule(value: string): string {
   return value.trimEnd();
 }
 
-function parseDeclarations(declarations: Declaration[]) {
+function parseDeclarations(declarations: Declaration[]): Style {
   const filteredDeclarations = removeCommentDeclarations(declarations);
 
   return filteredDeclarations.reduce<Style>((acc, declaration) => {
@@ -48,19 +48,21 @@ function parseRule(
   selectors: string[],
   declarations: Declaration[],
   rules: Style
-) {
+): Style {
   const key = selectors.join(",");
-  if (rules[key])
+  if (rules[key]) {
+    const rulesAtKey = rules[key] as StyleRule;
     return {
       [key]: {
-        ...rules[key],
+        ...rulesAtKey,
         ...parseDeclarations(declarations),
       },
-    };
+    } as Style;
+  }
 
   return {
     [key]: parseDeclarations(declarations),
-  };
+  } as Style;
 }
 
 function nestMediaQueryRules(
@@ -69,10 +71,9 @@ function nestMediaQueryRules(
   rules: Style
 ): Style {
   return Object.keys(mediaRules).reduce<Style>((acc, selector) => {
-    acc[selector] = {
-      ...acc[selector],
+    acc[selector] = Object.assign({}, acc[selector], {
       [mediaSelector]: mediaRules[selector],
-    };
+    });
 
     return acc;
   }, rules);
