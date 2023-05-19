@@ -1,0 +1,31 @@
+:root {
+  --color-primary: #ff443d;
+  --color-secondary: #008cff;
+}
+
+body {
+  margin: 0;
+  font-size: 16px;
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.content-box {
+  background-color: var(--color-primary);
+}
+
+@media (min-width: 768px) {
+  .content-box {
+    background-color: var(--color-secondary);
+  }
+}
+
+.content-wrapper {
+  max-width: none;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .content-wrapper {
+    max-width: 900px;
+  }
+}
