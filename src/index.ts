@@ -16,7 +16,7 @@ const [entriesFile, outputFile] = program.args;
 async function getFileContent(pathFile: string): Promise<string | undefined> {
   try {
     const filePath = new URL(
-      path.resolve(__dirname, pathFile),
+      path.resolve(pathFile),
       import.meta.url
     );
     const contents = await readFile(filePath, { encoding: "utf8" });
@@ -32,7 +32,7 @@ async function writeJsFile(content: string, outputPath: string): Promise<void> {
   const { signal } = controller;
 
   const output = new Uint8Array(Buffer.from(`module.exports=${content}`));
-  const file = writeFile(path.resolve(__dirname, outputPath), output, {
+  const file = writeFile(path.resolve(outputPath), output, {
     signal,
   });
 
