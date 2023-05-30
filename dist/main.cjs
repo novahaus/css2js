@@ -1,4 +1,4 @@
-#!/usr/bin/env node  
+#!/usr/bin/env node 
 var $8zHUo$process = require("process");
 var $8zHUo$nodefspromises = require("node:fs/promises");
 var $8zHUo$path = require("path");
@@ -65,8 +65,11 @@ function $0f6a681c4346f47b$var$parseRule(selectors, declarations, rules) {
 }
 function $0f6a681c4346f47b$var$nestMediaQueryRules(mediaSelector, mediaRules, rules) {
     return Object.keys(mediaRules).reduce((acc, selector)=>{
-        acc[selector] = Object.assign({}, acc[selector], {
-            [mediaSelector]: mediaRules[selector]
+        let currentRules = mediaRules[selector];
+        const current = acc[selector];
+        if (current && current[mediaSelector]) currentRules = Object.assign({}, current[mediaSelector], currentRules);
+        acc[selector] = Object.assign({}, current, {
+            [mediaSelector]: currentRules
         });
         return acc;
     }, rules);

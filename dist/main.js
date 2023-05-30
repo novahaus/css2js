@@ -56,8 +56,11 @@ function $a5221086de520fb0$var$parseRule(selectors, declarations, rules) {
 }
 function $a5221086de520fb0$var$nestMediaQueryRules(mediaSelector, mediaRules, rules) {
     return Object.keys(mediaRules).reduce((acc, selector)=>{
-        acc[selector] = Object.assign({}, acc[selector], {
-            [mediaSelector]: mediaRules[selector]
+        let currentRules = mediaRules[selector];
+        const current = acc[selector];
+        if (current && current[mediaSelector]) currentRules = Object.assign({}, current[mediaSelector], currentRules);
+        acc[selector] = Object.assign({}, current, {
+            [mediaSelector]: currentRules
         });
         return acc;
     }, rules);

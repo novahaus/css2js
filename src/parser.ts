@@ -71,8 +71,16 @@ function nestMediaQueryRules(
   rules: Style
 ): Style {
   return Object.keys(mediaRules).reduce<Style>((acc, selector) => {
-    acc[selector] = Object.assign({}, acc[selector], {
-      [mediaSelector]: mediaRules[selector],
+
+    let currentRules = mediaRules[selector];
+    const current = acc[selector] as StyleRule;
+    
+    if(current && current[mediaSelector]){
+      currentRules = Object.assign({}, current[mediaSelector], currentRules);
+    }
+
+    acc[selector] = Object.assign({}, current, {
+      [mediaSelector]: currentRules,
     });
 
     return acc;

@@ -248,4 +248,37 @@ describe("hello", () => {
 
     expect(result).toEqual(styleJS);
   });
+
+  it("should merge duplicated media queries", () => {
+    const styleCSS = `
+      .wk-test-class {
+        display: block;
+      }
+
+      @media (min-width: 1024px) {
+        .wk-test-class {
+          display: none;
+        }
+      }
+      @media (min-width: 1024px) {
+        .wk-test-class {
+          height: 200px;
+        }
+      }
+    `;
+
+    const styleJS = {
+      ".wk-test-class": {
+        "@media (min-width: 1024px)": {
+          display: "none",
+          height: "200px"
+        },
+        display: "block",
+      },
+    };
+
+    const result = parse(styleCSS);
+
+    expect(result).toEqual(styleJS);
+  });
 });
