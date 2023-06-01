@@ -1,4 +1,4 @@
-#!/usr/bin/env node 
+#!/usr/bin/env node  
 var $8zHUo$process = require("process");
 var $8zHUo$nodefspromises = require("node:fs/promises");
 var $8zHUo$path = require("path");
@@ -28,11 +28,15 @@ function $0f6a681c4346f47b$var$removeCommentDeclarations(declarations) {
 function $0f6a681c4346f47b$var$isCSSVariable(value) {
     return value.startsWith("--");
 }
+function $0f6a681c4346f47b$var$hasVendorSpecificPrefix(value) {
+    return !!value.match(/^[-_][a-z]/);
+}
 function $0f6a681c4346f47b$var$capitalize(value) {
     return value.charAt(0).toUpperCase() + value.slice(1);
 }
 function $0f6a681c4346f47b$var$getDeclarationKey(declarationProperty) {
     if ($0f6a681c4346f47b$var$isCSSVariable(declarationProperty)) return `-${$0f6a681c4346f47b$var$capitalize((0, $8zHUo$lodash.camelCase)(declarationProperty))}`;
+    if ($0f6a681c4346f47b$var$hasVendorSpecificPrefix(declarationProperty)) return `${declarationProperty.startsWith("-") ? "-" : "_"}${(0, $8zHUo$lodash.camelCase)(declarationProperty)}`;
     return (0, $8zHUo$lodash.camelCase)(declarationProperty);
 }
 function $0f6a681c4346f47b$var$saniziteDeclarationRule(value) {

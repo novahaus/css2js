@@ -15,6 +15,10 @@ function isCSSVariable(value: string): boolean {
   return value.startsWith("--");
 }
 
+function hasVendorSpecificPrefix(value: string): boolean {
+  return !!value.match(/^[-_][a-z]/);
+}
+
 function capitalize(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
@@ -22,6 +26,11 @@ function capitalize(value: string): string {
 function getDeclarationKey(declarationProperty: string): string {
   if (isCSSVariable(declarationProperty))
     return `-${capitalize(camelCase(declarationProperty))}`;
+
+  if (hasVendorSpecificPrefix(declarationProperty))
+    return `${declarationProperty.startsWith("-") ? "-" : "_"}${camelCase(
+      declarationProperty
+    )}`;
 
   return camelCase(declarationProperty);
 }
@@ -71,11 +80,10 @@ function nestMediaQueryRules(
   rules: Style
 ): Style {
   return Object.keys(mediaRules).reduce<Style>((acc, selector) => {
-
     let currentRules = mediaRules[selector];
     const current = acc[selector] as StyleRule;
-    
-    if(current && current[mediaSelector]){
+
+    if (current && current[mediaSelector]) {
       currentRules = Object.assign({}, current[mediaSelector], currentRules);
     }
 

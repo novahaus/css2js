@@ -271,9 +271,31 @@ describe("hello", () => {
       ".wk-test-class": {
         "@media (min-width: 1024px)": {
           display: "none",
-          height: "200px"
+          height: "200px",
         },
         display: "block",
+      },
+    };
+
+    const result = parse(styleCSS);
+
+    expect(result).toEqual(styleJS);
+  });
+
+  it("should keep vendor specific prefixes on property", () => {
+    const styleCSS = `
+      .wk-test-class {
+        -webkit-wk: lorem;
+        _moz-wk: lorem;
+        --wk-var: lorem;
+      }
+    `;
+
+    const styleJS = {
+      ".wk-test-class": {
+        "-webkitWk": "lorem",
+        _mozWk: "lorem",
+        "-WkVar": "lorem",
       },
     };
 

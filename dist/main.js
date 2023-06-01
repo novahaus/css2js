@@ -19,11 +19,15 @@ function $a5221086de520fb0$var$removeCommentDeclarations(declarations) {
 function $a5221086de520fb0$var$isCSSVariable(value) {
     return value.startsWith("--");
 }
+function $a5221086de520fb0$var$hasVendorSpecificPrefix(value) {
+    return !!value.match(/^[-_][a-z]/);
+}
 function $a5221086de520fb0$var$capitalize(value) {
     return value.charAt(0).toUpperCase() + value.slice(1);
 }
 function $a5221086de520fb0$var$getDeclarationKey(declarationProperty) {
     if ($a5221086de520fb0$var$isCSSVariable(declarationProperty)) return `-${$a5221086de520fb0$var$capitalize((0, $hgUW1$camelCase)(declarationProperty))}`;
+    if ($a5221086de520fb0$var$hasVendorSpecificPrefix(declarationProperty)) return `${declarationProperty.startsWith("-") ? "-" : "_"}${(0, $hgUW1$camelCase)(declarationProperty)}`;
     return (0, $hgUW1$camelCase)(declarationProperty);
 }
 function $a5221086de520fb0$var$saniziteDeclarationRule(value) {
