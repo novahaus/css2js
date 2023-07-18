@@ -1,9 +1,9 @@
 import css, { Declaration, FontFace, Media, Node, Rule } from "css";
 import { camelCase } from "lodash";
 
-type StyleRule = Record<string, string>;
+type StyleRule = Record<string, string | string[]>;
 
-type Style = Record<string, StyleRule | string>;
+type Style = Record<string, StyleRule | string | string[]>;
 
 function removeCommentDeclarations(declarations: Declaration[]) {
   return declarations.filter(
@@ -47,6 +47,11 @@ function parseDeclarations(declarations: Declaration[]): Style {
 
     const declarationProperty = getDeclarationKey(declaration.property);
     const declarationValue = saniziteDeclarationRule(declaration.value);
+
+    if (!!acc[declarationProperty]) {
+      acc[declarationProperty] = [acc[declarationProperty], declarationValue].flat() as string[];
+      return acc;
+    }
 
     acc[declarationProperty] = declarationValue;
     return acc;

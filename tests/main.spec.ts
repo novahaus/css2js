@@ -3,7 +3,7 @@ import { parse } from "../src/parser";
 
 describe("hello", () => {
   it("should convert a simple CSS", () => {
-    const styleCSS = `
+    const styleCSS = /* css */`
       body {
         background-color: blue;
       }
@@ -21,7 +21,7 @@ describe("hello", () => {
   });
 
   it("should convert a CSS with media query", () => {
-    const styleCSS = `
+    const styleCSS = /* css */`
       body {
         background-color: blue;
       }
@@ -49,7 +49,7 @@ describe("hello", () => {
   });
 
   it("should convert a CSS with css var reading", () => {
-    const styleCSS = `
+    const styleCSS = /* css */`
       body {
         background-color: var(--primary-color);
       }
@@ -67,7 +67,7 @@ describe("hello", () => {
   });
 
   it("should convert a css with CSS var declaration", () => {
-    const styleCSS = `.wk-avatar {
+    const styleCSS = /* css */`.wk-avatar {
       border-radius: var(--wk-rounded-round);
 
       --avatar-placeholder-color: var(--wk-color-base-100);
@@ -98,7 +98,7 @@ describe("hello", () => {
   });
 
   it("should convert a css with nested selectors", () => {
-    const styleCSS = `.wk-breadcrumb-item:focus .wk-breadcrumb-icon {
+    const styleCSS = /* css */`.wk-breadcrumb-item:focus .wk-breadcrumb-icon {
       margin-left: 0.375rem;
     }`;
 
@@ -114,7 +114,7 @@ describe("hello", () => {
   });
 
   it("should nest media css rules", () => {
-    const styleCSS = `
+    const styleCSS = /* css */`
       body {
         background-color: var(--primary-color);
       }
@@ -141,7 +141,7 @@ describe("hello", () => {
   });
 
   it("should nest media css rules wrote before", () => {
-    const styleCSS = `
+    const styleCSS = /* css */`
       @media (max-width: 768px) {
         body {
           color: red;
@@ -167,7 +167,7 @@ describe("hello", () => {
   });
 
   it("should nest media css rules without a parent selector", () => {
-    const styleCSS = `
+    const styleCSS = /* css */`
       @media (max-width: 768px) {
         body {
           color: red;
@@ -189,7 +189,7 @@ describe("hello", () => {
   });
 
   it("should parse font-face", () => {
-    const styleCSS = `
+    const styleCSS = /* css */`
       @font-face {
         font-family: Trickster;
         src: local("Trickster"), url("trickster-COLRv1.otf") format("opentype") tech(color-COLRv1), url("trickster-outline.otf") format("opentype"), url("trickster-outline.woff") format("woff");
@@ -209,7 +209,7 @@ describe("hello", () => {
   });
 
   it("should keep the media writing order", () => {
-    const styleCSS = `
+    const styleCSS = /* css */`
       .wk-card-carousel-disable-desktop .wk-card-carousel-pagination {
           display: block;
         }
@@ -250,7 +250,7 @@ describe("hello", () => {
   });
 
   it("should merge duplicated media queries", () => {
-    const styleCSS = `
+    const styleCSS = /* css */`
       .wk-test-class {
         display: block;
       }
@@ -283,7 +283,7 @@ describe("hello", () => {
   });
 
   it("should keep vendor specific prefixes on property", () => {
-    const styleCSS = `
+    const styleCSS = /* css */`
       .wk-test-class {
         -webkit-wk: lorem;
         _moz-wk: lorem;
@@ -296,6 +296,25 @@ describe("hello", () => {
         "-webkitWk": "lorem",
         _mozWk: "lorem",
         "-WkVar": "lorem",
+      },
+    };
+
+    const result = parse(styleCSS);
+
+    expect(result).toEqual(styleJS);
+  });
+
+  it("should maintain duplicated properties on same class", () => {
+    const styleCSS = /* css */`
+      .wk-test-class {
+        property: -webkit-lorem;
+        property: -moz-lorem;
+      }
+    `;
+
+    const styleJS = {
+      ".wk-test-class": {
+        "property": ["-webkit-lorem", "-moz-lorem"],
       },
     };
 
