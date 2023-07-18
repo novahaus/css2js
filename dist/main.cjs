@@ -1,4 +1,4 @@
-#!/usr/bin/env node  
+#!/usr/bin/env node 
 var $8zHUo$process = require("process");
 var $8zHUo$nodefspromises = require("node:fs/promises");
 var $8zHUo$path = require("path");
@@ -39,7 +39,7 @@ function $0f6a681c4346f47b$var$getDeclarationKey(declarationProperty) {
     if ($0f6a681c4346f47b$var$hasVendorSpecificPrefix(declarationProperty)) return `${declarationProperty.startsWith("-") ? "-" : "_"}${(0, $8zHUo$lodash.camelCase)(declarationProperty)}`;
     return (0, $8zHUo$lodash.camelCase)(declarationProperty);
 }
-function $0f6a681c4346f47b$var$saniziteDeclarationRule(value) {
+function $0f6a681c4346f47b$var$sanitizeDeclarationRule(value) {
     return value.trimEnd();
 }
 function $0f6a681c4346f47b$var$parseDeclarations(declarations) {
@@ -47,7 +47,14 @@ function $0f6a681c4346f47b$var$parseDeclarations(declarations) {
     return filteredDeclarations.reduce((acc, declaration)=>{
         if (!declaration.property || !declaration.value) return acc;
         const declarationProperty = $0f6a681c4346f47b$var$getDeclarationKey(declaration.property);
-        const declarationValue = $0f6a681c4346f47b$var$saniziteDeclarationRule(declaration.value);
+        const declarationValue = $0f6a681c4346f47b$var$sanitizeDeclarationRule(declaration.value);
+        if (!!acc[declarationProperty]) {
+            acc[declarationProperty] = [
+                acc[declarationProperty],
+                declarationValue
+            ].flat();
+            return acc;
+        }
         acc[declarationProperty] = declarationValue;
         return acc;
     }, {});

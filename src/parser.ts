@@ -35,7 +35,7 @@ function getDeclarationKey(declarationProperty: string): string {
   return camelCase(declarationProperty);
 }
 
-function saniziteDeclarationRule(value: string): string {
+function sanitizeDeclarationRule(value: string): string {
   return value.trimEnd();
 }
 
@@ -46,7 +46,7 @@ function parseDeclarations(declarations: Declaration[]): Style {
     if (!declaration.property || !declaration.value) return acc;
 
     const declarationProperty = getDeclarationKey(declaration.property);
-    const declarationValue = saniziteDeclarationRule(declaration.value);
+    const declarationValue = sanitizeDeclarationRule(declaration.value);
 
     if (!!acc[declarationProperty]) {
       acc[declarationProperty] = [acc[declarationProperty], declarationValue].flat() as string[];

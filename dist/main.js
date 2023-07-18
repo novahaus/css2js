@@ -30,7 +30,7 @@ function $a5221086de520fb0$var$getDeclarationKey(declarationProperty) {
     if ($a5221086de520fb0$var$hasVendorSpecificPrefix(declarationProperty)) return `${declarationProperty.startsWith("-") ? "-" : "_"}${(0, $hgUW1$camelCase)(declarationProperty)}`;
     return (0, $hgUW1$camelCase)(declarationProperty);
 }
-function $a5221086de520fb0$var$saniziteDeclarationRule(value) {
+function $a5221086de520fb0$var$sanitizeDeclarationRule(value) {
     return value.trimEnd();
 }
 function $a5221086de520fb0$var$parseDeclarations(declarations) {
@@ -38,7 +38,14 @@ function $a5221086de520fb0$var$parseDeclarations(declarations) {
     return filteredDeclarations.reduce((acc, declaration)=>{
         if (!declaration.property || !declaration.value) return acc;
         const declarationProperty = $a5221086de520fb0$var$getDeclarationKey(declaration.property);
-        const declarationValue = $a5221086de520fb0$var$saniziteDeclarationRule(declaration.value);
+        const declarationValue = $a5221086de520fb0$var$sanitizeDeclarationRule(declaration.value);
+        if (!!acc[declarationProperty]) {
+            acc[declarationProperty] = [
+                acc[declarationProperty],
+                declarationValue
+            ].flat();
+            return acc;
+        }
         acc[declarationProperty] = declarationValue;
         return acc;
     }, {});
