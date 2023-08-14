@@ -127,10 +127,10 @@ function parseKeyFrameDeclaration(
 function parseKeyFrames(name: string, keyframes: KeyFrame[]): Style {
   return keyframes.reduce<KeyFrame>((acc, curr) => {
     const key = (curr.values ?? []).join(", ");
-    const keyFrameRule = (acc as Style)[name] as StyleRule;
+    const keyFrameRule = (acc as Style)[`@keyframes ${name}`] as StyleRule;
     acc = {
       ...acc,
-      [name]: {
+      [`@keyframes ${name}`]: {
         ...keyFrameRule,
         [key]: parseKeyFrameDeclaration(curr.declarations as Declaration[]),
       },
@@ -185,10 +185,8 @@ function parseNodes(nodes: Node[]): Style {
       acc = {
         ...acc,
         ...{
-          keyframes: {
-            ...((acc as Style)["keyframes"] as any),
-            ...(parsedKeyFrames as any),
-          },
+          ...((acc as Style)["keyframes"] as any),
+          ...(parsedKeyFrames as any),
         },
       };
     }

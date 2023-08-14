@@ -88,10 +88,10 @@ function $a5221086de520fb0$var$parseKeyFrameDeclaration(keyFrameDeclaration) {
 function $a5221086de520fb0$var$parseKeyFrames(name, keyframes) {
     return keyframes.reduce((acc, curr)=>{
         const key = (curr.values ?? []).join(", ");
-        const keyFrameRule = acc[name];
+        const keyFrameRule = acc[`@keyframes ${name}`];
         acc = {
             ...acc,
-            [name]: {
+            [`@keyframes ${name}`]: {
                 ...keyFrameRule,
                 [key]: $a5221086de520fb0$var$parseKeyFrameDeclaration(curr.declarations)
             }
@@ -134,7 +134,7 @@ function $a5221086de520fb0$var$parseNodes(nodes) {
             const parsedKeyFrames = $a5221086de520fb0$var$parseKeyFrames(keyframes.name, keyframes.keyframes);
             acc = {
                 ...acc,
-                keyframes: {
+                ...{
                     ...acc["keyframes"],
                     ...parsedKeyFrames
                 }

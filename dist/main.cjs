@@ -97,10 +97,10 @@ function $0f6a681c4346f47b$var$parseKeyFrameDeclaration(keyFrameDeclaration) {
 function $0f6a681c4346f47b$var$parseKeyFrames(name, keyframes) {
     return keyframes.reduce((acc, curr)=>{
         const key = (curr.values ?? []).join(", ");
-        const keyFrameRule = acc[name];
+        const keyFrameRule = acc[`@keyframes ${name}`];
         acc = {
             ...acc,
-            [name]: {
+            [`@keyframes ${name}`]: {
                 ...keyFrameRule,
                 [key]: $0f6a681c4346f47b$var$parseKeyFrameDeclaration(curr.declarations)
             }
@@ -143,7 +143,7 @@ function $0f6a681c4346f47b$var$parseNodes(nodes) {
             const parsedKeyFrames = $0f6a681c4346f47b$var$parseKeyFrames(keyframes.name, keyframes.keyframes);
             acc = {
                 ...acc,
-                keyframes: {
+                ...{
                     ...acc["keyframes"],
                     ...parsedKeyFrames
                 }
