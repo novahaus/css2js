@@ -85,6 +85,29 @@ function $0f6a681c4346f47b$var$nestMediaQueryRules(mediaSelector, mediaRules, ru
         return acc;
     }, rules);
 }
+function $0f6a681c4346f47b$var$parseKeyFrameDeclaration(keyFrameDeclaration) {
+    return keyFrameDeclaration.reduce((acc, curr)=>{
+        acc = {
+            ...acc,
+            [curr.property]: curr.value
+        };
+        return acc;
+    }, {});
+}
+function $0f6a681c4346f47b$var$parseKeyFrames(name, keyframes) {
+    return keyframes.reduce((acc, curr)=>{
+        const key = (curr.values ?? []).join(", ");
+        const keyFrameRule = acc[name];
+        acc = {
+            ...acc,
+            [name]: {
+                ...keyFrameRule,
+                [key]: $0f6a681c4346f47b$var$parseKeyFrameDeclaration(curr.declarations)
+            }
+        };
+        return acc;
+    }, {});
+}
 function $0f6a681c4346f47b$var$parseNodes(nodes) {
     return nodes.reduce((acc, node)=>{
         if (node.type === "rule") {
@@ -113,6 +136,18 @@ function $0f6a681c4346f47b$var$parseNodes(nodes) {
             const mediaRules = $0f6a681c4346f47b$var$parseNodes(media.rules);
             const mediaSelector = `@media ${media.media}`;
             acc = $0f6a681c4346f47b$var$nestMediaQueryRules(mediaSelector, mediaRules, acc);
+        }
+        if (node.type === "keyframes") {
+            const keyframes = node;
+            if (!keyframes.keyframes) return acc;
+            const parsedKeyFrames = $0f6a681c4346f47b$var$parseKeyFrames(keyframes.name, keyframes.keyframes);
+            acc = {
+                ...acc,
+                keyframes: {
+                    ...acc["keyframes"],
+                    ...parsedKeyFrames
+                }
+            };
         }
         return acc;
     }, {});

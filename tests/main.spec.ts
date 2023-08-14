@@ -3,7 +3,7 @@ import { parse } from "../src/parser";
 
 describe("hello", () => {
   it("should convert a simple CSS", () => {
-    const styleCSS = /* css */`
+    const styleCSS = /* css */ `
       body {
         background-color: blue;
       }
@@ -21,7 +21,7 @@ describe("hello", () => {
   });
 
   it("should convert a CSS with media query", () => {
-    const styleCSS = /* css */`
+    const styleCSS = /* css */ `
       body {
         background-color: blue;
       }
@@ -49,7 +49,7 @@ describe("hello", () => {
   });
 
   it("should convert a CSS with css var reading", () => {
-    const styleCSS = /* css */`
+    const styleCSS = /* css */ `
       body {
         background-color: var(--primary-color);
       }
@@ -67,7 +67,7 @@ describe("hello", () => {
   });
 
   it("should convert a css with CSS var declaration", () => {
-    const styleCSS = /* css */`.wk-avatar {
+    const styleCSS = /* css */ `.wk-avatar {
       border-radius: var(--wk-rounded-round);
 
       --avatar-placeholder-color: var(--wk-color-base-100);
@@ -98,7 +98,7 @@ describe("hello", () => {
   });
 
   it("should convert a css with nested selectors", () => {
-    const styleCSS = /* css */`.wk-breadcrumb-item:focus .wk-breadcrumb-icon {
+    const styleCSS = /* css */ `.wk-breadcrumb-item:focus .wk-breadcrumb-icon {
       margin-left: 0.375rem;
     }`;
 
@@ -114,7 +114,7 @@ describe("hello", () => {
   });
 
   it("should nest media css rules", () => {
-    const styleCSS = /* css */`
+    const styleCSS = /* css */ `
       body {
         background-color: var(--primary-color);
       }
@@ -141,7 +141,7 @@ describe("hello", () => {
   });
 
   it("should nest media css rules wrote before", () => {
-    const styleCSS = /* css */`
+    const styleCSS = /* css */ `
       @media (max-width: 768px) {
         body {
           color: red;
@@ -167,7 +167,7 @@ describe("hello", () => {
   });
 
   it("should nest media css rules without a parent selector", () => {
-    const styleCSS = /* css */`
+    const styleCSS = /* css */ `
       @media (max-width: 768px) {
         body {
           color: red;
@@ -189,7 +189,7 @@ describe("hello", () => {
   });
 
   it("should parse font-face", () => {
-    const styleCSS = /* css */`
+    const styleCSS = /* css */ `
       @font-face {
         font-family: Trickster;
         src: local("Trickster"), url("trickster-COLRv1.otf") format("opentype") tech(color-COLRv1), url("trickster-outline.otf") format("opentype"), url("trickster-outline.woff") format("woff");
@@ -209,7 +209,7 @@ describe("hello", () => {
   });
 
   it("should keep the media writing order", () => {
-    const styleCSS = /* css */`
+    const styleCSS = /* css */ `
       .wk-card-carousel-disable-desktop .wk-card-carousel-pagination {
           display: block;
         }
@@ -250,7 +250,7 @@ describe("hello", () => {
   });
 
   it("should merge duplicated media queries", () => {
-    const styleCSS = /* css */`
+    const styleCSS = /* css */ `
       .wk-test-class {
         display: block;
       }
@@ -283,7 +283,7 @@ describe("hello", () => {
   });
 
   it("should keep vendor specific prefixes on property", () => {
-    const styleCSS = /* css */`
+    const styleCSS = /* css */ `
       .wk-test-class {
         -webkit-wk: lorem;
         _moz-wk: lorem;
@@ -305,7 +305,7 @@ describe("hello", () => {
   });
 
   it("should maintain duplicated properties on same class", () => {
-    const styleCSS = /* css */`
+    const styleCSS = /* css */ `
       .wk-test-class {
         property: -webkit-lorem;
         property: -moz-lorem;
@@ -314,7 +314,63 @@ describe("hello", () => {
 
     const styleJS = {
       ".wk-test-class": {
-        "property": ["-webkit-lorem", "-moz-lorem"],
+        property: ["-webkit-lorem", "-moz-lorem"],
+      },
+    };
+
+    const result = parse(styleCSS);
+
+    expect(result).toEqual(styleJS);
+  });
+
+  it("should convert a CSS with keyframes animation", () => {
+    const styleCSS = /* css */ `
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes bounce {
+        0%, 100% {
+          transform: translateY(-25%);
+          animation-timing-function: cubic-bezier(0.8,0,1,1);
+        }
+        50% {
+          transform: none;
+          animation-timing-function: cubic-bezier(0,0,0.2,1);
+        }
+      }
+      .animate-spin {
+        animation: spin 1s linear infinite;
+      }
+      .animate-bounce {
+        animation: bounce 1s infinite;
+      }
+    `;
+
+    const styleJS = {
+      keyframes: {
+        spin: {
+          to: {
+            transform: "rotate(360deg)",
+          },
+        },
+        bounce: {
+          "0%, 100%": {
+            transform: "translateY(-25%)",
+            "animation-timing-function": "cubic-bezier(0.8,0,1,1)",
+          },
+          "50%": {
+            transform: "none",
+            "animation-timing-function": "cubic-bezier(0,0,0.2,1)",
+          },
+        },
+      },
+      ".animate-spin": {
+        animation: "spin 1s linear infinite",
+      },
+      ".animate-bounce": {
+        animation: "bounce 1s infinite",
       },
     };
 

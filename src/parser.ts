@@ -1,4 +1,12 @@
-import css, { Declaration, FontFace, Media, Node, Rule } from "css";
+import css, {
+  Declaration,
+  FontFace,
+  KeyFrame,
+  KeyFrames,
+  Media,
+  Node,
+  Rule,
+} from "css";
 import { camelCase } from "lodash";
 
 type StyleRule = Record<string, string | string[]>;
@@ -49,7 +57,10 @@ function parseDeclarations(declarations: Declaration[]): Style {
     const declarationValue = sanitizeDeclarationRule(declaration.value);
 
     if (!!acc[declarationProperty]) {
-      acc[declarationProperty] = [acc[declarationProperty], declarationValue].flat() as string[];
+      acc[declarationProperty] = [
+        acc[declarationProperty],
+        declarationValue,
+      ].flat() as string[];
       return acc;
     }
 
@@ -100,6 +111,34 @@ function nestMediaQueryRules(
   }, rules);
 }
 
+function parseKeyFrameDeclaration(
+  keyFrameDeclaration: Declaration[]
+): StyleRule {
+  return keyFrameDeclaration.reduce<StyleRule>((acc, curr) => {
+    acc = {
+      ...acc,
+      [curr.property as string]: curr.value as string,
+    };
+
+    return acc;
+  }, {});
+}
+
+function parseKeyFrames(name: string, keyframes: KeyFrame[]): Style {
+  return keyframes.reduce<KeyFrame>((acc, curr) => {
+    const key = (curr.values ?? []).join(", ");
+    const keyFrameRule = (acc as Style)[name] as StyleRule;
+    acc = {
+      ...acc,
+      [name]: {
+        ...keyFrameRule,
+        [key]: parseKeyFrameDeclaration(curr.declarations as Declaration[]),
+      },
+    };
+    return acc;
+  }, {}) as Style;
+}
+
 function parseNodes(nodes: Node[]): Style {
   return nodes.reduce<Style>((acc, node) => {
     if (node.type === "rule") {
@@ -131,6 +170,27 @@ function parseNodes(nodes: Node[]): Style {
       const mediaSelector = `@media ${media.media}`;
 
       acc = nestMediaQueryRules(mediaSelector, mediaRules, acc);
+    }
+
+    if (node.type === "keyframes") {
+      const keyframes = <KeyFrames>node;
+
+      if (!keyframes.keyframes) return acc;
+
+      const parsedKeyFrames = parseKeyFrames(
+        keyframes.name as string,
+        keyframes.keyframes
+      );
+
+      acc = {
+        ...acc,
+        ...{
+          keyframes: {
+            ...((acc as Style)["keyframes"] as any),
+            ...(parsedKeyFrames as any),
+          },
+        },
+      };
     }
     return acc;
   }, {});

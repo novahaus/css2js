@@ -76,6 +76,29 @@ function $a5221086de520fb0$var$nestMediaQueryRules(mediaSelector, mediaRules, ru
         return acc;
     }, rules);
 }
+function $a5221086de520fb0$var$parseKeyFrameDeclaration(keyFrameDeclaration) {
+    return keyFrameDeclaration.reduce((acc, curr)=>{
+        acc = {
+            ...acc,
+            [curr.property]: curr.value
+        };
+        return acc;
+    }, {});
+}
+function $a5221086de520fb0$var$parseKeyFrames(name, keyframes) {
+    return keyframes.reduce((acc, curr)=>{
+        const key = (curr.values ?? []).join(", ");
+        const keyFrameRule = acc[name];
+        acc = {
+            ...acc,
+            [name]: {
+                ...keyFrameRule,
+                [key]: $a5221086de520fb0$var$parseKeyFrameDeclaration(curr.declarations)
+            }
+        };
+        return acc;
+    }, {});
+}
 function $a5221086de520fb0$var$parseNodes(nodes) {
     return nodes.reduce((acc, node)=>{
         if (node.type === "rule") {
@@ -104,6 +127,18 @@ function $a5221086de520fb0$var$parseNodes(nodes) {
             const mediaRules = $a5221086de520fb0$var$parseNodes(media.rules);
             const mediaSelector = `@media ${media.media}`;
             acc = $a5221086de520fb0$var$nestMediaQueryRules(mediaSelector, mediaRules, acc);
+        }
+        if (node.type === "keyframes") {
+            const keyframes = node;
+            if (!keyframes.keyframes) return acc;
+            const parsedKeyFrames = $a5221086de520fb0$var$parseKeyFrames(keyframes.name, keyframes.keyframes);
+            acc = {
+                ...acc,
+                keyframes: {
+                    ...acc["keyframes"],
+                    ...parsedKeyFrames
+                }
+            };
         }
         return acc;
     }, {});
